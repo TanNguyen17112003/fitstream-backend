@@ -8,15 +8,14 @@ from .models import (
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "password", "full_name", "role", "profile_picture"]
+        fields = ["id", "email", "password", "full_name", "role", "profile_picture", "created_at"]
         extra_kwargs = {"password": {"write_only": True}}
 
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
+    
 
 
 class WorkoutSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)  # Định nghĩa kiểu dữ liệu UUID
     class Meta:
         model = Workout
         fields = ["id", "title", "description", "level", "video_url", "thumbnail_url", "duration", "created_at"]

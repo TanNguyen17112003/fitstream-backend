@@ -33,17 +33,29 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Sử dụng JWT
     ],
 }
 
 SIMPLE_JWT = {
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'FitStream API',
+    'DESCRIPTION': 'API documentation for FitStream system',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication'],
+    'SWAGGER_UI_SETTINGS': {
+        "persistAuthorization": True  # Giữ token sau khi nhập
+    },
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 
 # Application definition
@@ -58,7 +70,7 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "corsheaders",
-    'drf_yasg',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [

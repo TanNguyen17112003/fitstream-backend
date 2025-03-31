@@ -1,25 +1,27 @@
 from django.db import models
 import uuid
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.utils.timezone import now
+from django.contrib.auth.hashers import check_password
 
 
-class User(AbstractUser):  
-    email = models.EmailField(unique=True)  
+class User(models.Model): 
+    id = models.IntegerField(primary_key=True, auto_created=True, default=1)  # Auto-incrementing ID
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255) 
     full_name = models.CharField(max_length=255)  
     role = models.CharField(
         max_length=10, 
         choices=[("customer", "Customer"), ("pt", "Personal Trainer"), ("admin", "Admin")], 
         default="customer"
     )
+    profile_picture = models.TextField(default="test")  # URL to the profile picture
+    created_at = models.DateTimeField(default=now)  # Timestamp when the user was created
 
-    groups = models.ManyToManyField(Group, related_name="custom_user_groups", blank=True)
-    user_permissions = models.ManyToManyField(Permission, related_name="custom_user_permissions", blank=True)
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
         return self.email
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
     
 class Workout(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -32,7 +34,7 @@ class Workout(models.Model):
     video_url = models.TextField(null=True, blank=True)
     thumbnail_url = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.title
 
